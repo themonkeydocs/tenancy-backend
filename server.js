@@ -65,3 +65,41 @@ app.get("/health", (req, res) => res.json({ ok: true }));
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log("Server on", port));
+// gjenero kontratën nga contract1.json dhe RentalAgreement.pdf
+app.get("/generate/contract1", async (req, res) => {
+  try {
+    const jsonPath = path.join(__dirname, "templates", "contract1.json");
+    const pdfPath = path.join(__dirname, "templates", "RentalAgreement.pdf");
+
+    // lexo JSON me të dhënat
+    const data = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
+
+    // lexo PDF template
+    const pdfBytes = fs.readFileSync(pdfPath);
+    const pdfDoc = await PDFDocument.load(pdfBytes);
+    const pages = pdfDoc.getPages();
+    const firstPage = pages[0];
+
+    // font për tekstin
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+    // shkruaj të dhënat (vendos koordinata sipas nevojës në PDF)
+    firstPage.drawText(`Tenant: ${data.tenantName}`, { x: 50, y: 700, size: 12, font });
+    firstPage.drawText(`Landlord: ${data.landlordName}`, { x: 50, y: 680, size: 12, font });
+    firstPage.drawText(`Address: ${data.propertyAddress}`, { x: 50, y: 660, size: 12, font });
+    firstPage.drawText(`Start Date: ${data.startDate}`, { x: 50, y: 640, size: 12, font });
+    firstPage.drawText(`End Date: ${data.endDate}`, { x: 50, y: 620, size: 12, font });
+    firstPage.drawText(`Rent: ${data.rent}`, { x: 50, y: 600, size: 12, font });
+    firstPage.drawText(`Deposit: ${data.deposit}`, { x: 50, y: 580, size: 12, font });
+
+    // ruaj PDF-in e ri
+    const modifiedPdf = await pdfDoc.save();
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=GeneratedContract.pdf");
+    res.send(Buffer.from(modifiedPdf));
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error generating contract");
+  }
+});

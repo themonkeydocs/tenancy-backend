@@ -1,11 +1,9 @@
 {
   "name": "tenancy-backend",
   "version": "1.0.0",
-  "main": "server.js",
   "type": "module",
-  "scripts": {
-    "start": "node server.js"
-  },
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
   "dependencies": {
     "express": "^4.18.2",
     "pdf-lib": "^1.17.1"

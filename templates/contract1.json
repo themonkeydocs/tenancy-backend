@@ -1,1 +1,9 @@
-
+{
+  "tenantName": "John Smith",
+  "landlordName": "Jane Doe",
+  "propertyAddress": "10 Park Lane",
+  "startDate": "2025-10-01",
+  "endDate": "2026-09-30",
+  "rent": "1200 GBP",
+  "deposit": "1200 GBP"
+}
